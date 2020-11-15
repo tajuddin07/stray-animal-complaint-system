@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1090576517064",
+    "firebase_url": "https://stray-animal-complaint-s-fc197.firebaseio.com",
+    "project_id": "stray-animal-complaint-s-fc197",
+    "storage_bucket": "stray-animal-complaint-s-fc197.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1090576517064:android:69c0121318faf4e916a2fd",
+        "android_client_info": {
+          "package_name": "com.example.sac"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1090576517064-km19aastqbshtogk9fkvshj8ntp4672l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlNDgOyFdXlBjkrrCxyV8IN2YoOCY7ui8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1090576517064-km19aastqbshtogk9fkvshj8ntp4672l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
