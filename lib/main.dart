@@ -4,7 +4,6 @@ import 'package:sac/screens/homescreen//homescreen.dart';
 
 
 
-
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -16,7 +15,8 @@ class MyApp extends StatelessWidget {
       title: 'Stray Animal Complaint System',
       theme: ThemeData(
         primaryColor: kPrimaryColor,
-        scaffoldBackgroundColor: Colors.white,
+        fontFamily: 'Oswald',
+        scaffoldBackgroundColor: Colors.white60,
       ),
       home: HomeScreen(),
     );

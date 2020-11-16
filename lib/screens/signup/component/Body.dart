@@ -6,7 +6,7 @@ import 'package:sac/components/rounded_password_field.dart';
 import 'package:sac/components/already_have_an_account_check.dart';
 import 'package:sac/screens/login/login.dart';
 import 'package:sac/screens/signup/component/background.dart';
-
+import 'package:sac/screens/UserHome/UserHome.dart';
 
 class Body extends StatelessWidget {
   @override
@@ -43,7 +43,14 @@ class Body extends StatelessWidget {
               ),
               RoundedButton(
                 text: "SIGNUP",
-                press: () {},
+                press: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context){
+                        return UserHome();
+                      })
+                  );
+                },
               ),
               SizedBox(height: size.height*0.03),
               AlreadyHaveAnAccountCheck(
@@ -53,7 +60,7 @@ class Body extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) {
-                            return Login();
+                            return LoginScreen();
                           },
                       ),
                   );
