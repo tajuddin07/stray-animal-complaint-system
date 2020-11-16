@@ -5,7 +5,7 @@ import 'package:sac/components/rounded_input_field.dart';
 import 'package:sac/components/rounded_password_field.dart';
 import 'package:sac/screens/signup/signup.dart';
 
-/*class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -14,6 +14,7 @@ import 'package:sac/screens/signup/signup.dart';
 class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
+
     Size size= MediaQuery.of(context).size;
     return Container(
       child: SingleChildScrollView(
@@ -50,13 +51,16 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-}*/
+}
 
-class LoginScreen extends StatelessWidget {
+
+/*class LoginScreen extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Body(),
     );
   }
-}
+}*/
+
