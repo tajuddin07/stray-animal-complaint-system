@@ -1,11 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sac/components/rounded_button.dart';
 import 'package:sac/components/already_have_an_account_check.dart';
-import 'package:sac/components/rounded_input_field.dart';
-import 'package:sac/components/rounded_password_field.dart';
-import 'package:sac/screens/UserHome/UserHome.dart';
-import 'package:sac/services/User.dart';
+import 'package:sac/services/authservice.dart';
+import 'package:provider/provider.dart';
+
 
 class SignUp extends StatefulWidget {
   @override
@@ -13,13 +12,16 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  TextEditingController nameController = TextEditingController();
-  String email ='';
-  String password = '';
-  String FName = '';
-  String LName = '';
-  String phoneNo = '';
-  String fullName='';
+
+  final _formKey = GlobalKey<FormState>();
+
+
+  TextEditingController nameCtrl = TextEditingController();
+  TextEditingController emailCtrl = TextEditingController();
+  TextEditingController passwordCtrl = TextEditingController();
+  TextEditingController PhoneNoCtrl = TextEditingController();
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -46,38 +48,82 @@ class _SignUpState extends State<SignUp> {
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: size.height*0.03),
-                      RoundedInputField(
-                        hintText: "Your Email",
-                        onChanged: (value){
-                          email =value;
-                        },
+                      Container(
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.all(10),
+                          child: Text(
+                            'Enter Your Account Information',
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 20),
+                          )),
+                      Container(
+                        padding: EdgeInsets.all(10),
+                        child: TextField(
+                          controller: nameCtrl,
+                          decoration: InputDecoration(
+                            border: new OutlineInputBorder(
+                              borderRadius: new BorderRadius.circular(25.0),),
+                            labelText: 'Name',
+                          ),
+                        ),
                       ),
-                      RoundedPasswordField(
-                        onChanged: (value){password =value;},
+                      Container(
+                        padding: EdgeInsets.all(10),
+                        child: TextField(
+                          controller: emailCtrl,
+                          decoration: InputDecoration(
+                            border: new OutlineInputBorder(
+                              borderRadius: new BorderRadius.circular(25.0),),
+                            labelText: 'E-Mail',
+                          ),
+                        ),
                       ),
-                      RoundedInputField(
-                        hintText: "First Name",
-                        onChanged: (value){FName =value;},
+                      Container(
+                        padding: EdgeInsets.all(10),
+                        child: TextField(
+                          controller: PhoneNoCtrl,
+                          decoration: InputDecoration(
+                            border: new OutlineInputBorder(
+                              borderRadius: new BorderRadius.circular(25.0),),
+                            labelText: 'Phone Number',
+                          ),
+                        ),
                       ),
-                      RoundedInputField(
-                        hintText: "Last Name",
-                        onChanged: (value){LName =value;},
+                      Container(
+                        padding: EdgeInsets.all(10),
+                        child: TextField(
+                          controller: passwordCtrl,
+                          decoration: InputDecoration(
+                            border: new OutlineInputBorder(
+                              borderRadius: new BorderRadius.circular(25.0),),
+                            labelText: 'Password',
+                          ),
+                        ),
                       ),
-                      RoundedInputField(
-                        hintText: "Phone Number",
-                        onChanged: (value){phoneNo =value;},
-                      ),
-                      RoundedButton(
-                        text: "SIGNUP",
-                        press: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context){
-                                return AddUser( FName, email, password, null,phoneNo);
-                              })
-                          );
-                        },
-                      ),
+
+                      Container(
+                          height: 50,
+                          padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+                          child: RaisedButton(
+                            textColor: Colors.white,
+                            color: Colors.cyan,
+                            child: Text('Sign Up'),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0),
+                            ),
+                            onPressed: () {
+                              context.read<AuthenticationService>().signUp(
+                                email: emailCtrl.text,
+                                password: passwordCtrl.text,
+                              );
+                              User updateUser = FirebaseAuth.instance.currentUser;
+                              updateUser.updateProfile(displayName: nameCtrl.text);
+                              userSetup(nameCtrl.text);
+                            },
+                          )),
+
                       AlreadyHaveAnAccountCheck(
                         press: (){
                           Navigator.push(
@@ -101,4 +147,7 @@ class _SignUpState extends State<SignUp> {
     );
 
   }
+}
+
+void userSetup(String text) {
 }
