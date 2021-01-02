@@ -1,5 +1,6 @@
 
 
+/*
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:sac/locator.dart';
@@ -26,7 +27,7 @@ class CRUDModel extends ChangeNotifier{
 
   Future<Users> getProductById(String id) async {
     var doc = await _api.getDocumentById(id);
-    return  Users.toJson(doc.data, doc.documentID) ;
+    return  Users.fromData(doc.data, doc.documentID) ;
   }
 
 
@@ -46,4 +47,4 @@ class CRUDModel extends ChangeNotifier{
 
   }
 
-}
+}*/

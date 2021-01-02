@@ -10,24 +10,27 @@ class Users {
   Users({this.id, this.address,this .name,this.password,this.email,this.phoneNo,this.role});
 
 
-  Users.fromJson(Map<String,dynamic>json) :
-        id = json['_id'],
-        name = json['_name'],
-        email = json['_email'],
-        address = json['_address'],
-        password = json['_password'],
-        phoneNo = json['_phoneNo'],
-        role = json['_role'];
+  Users.fromData( Map<String,dynamic> data)
 
-  Map<String,dynamic> toJson()=>
-     {
+      : id = data['id'],
+        name = data['name'],
+        email = data['email'],
+        address = data['address'],
+        password = data['password'],
+        phoneNo = data['phoneNo'],
+        role = data['role'];
+
+
+  Map <String,dynamic> toJson()  {
+    return {
       "id": id,
-       "Name":name,
+      "Name": name,
       "Email": email,
-      "Address" : address,
-      "Password" : password,
-      "Phone Number" : phoneNo,
-      "Role" : role,
-    };
+      "Address": address,
+      "Password": password,
+      "Phone Number": phoneNo,
+      "Role": role,
+     };
+    }
   }
-}
+
