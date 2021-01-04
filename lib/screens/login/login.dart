@@ -1,99 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:sac/components/rounded_button.dart';
-import 'package:sac/screens/login/component/Body.dart';
-import 'package:sac/components/already_have_an_account_check.dart';
 import 'package:sac/components/rounded_input_field.dart';
+import 'package:sac/constant.dart';
 import 'package:sac/components/rounded_password_field.dart';
-import 'package:sac/screens/signup/signup.dart';
-
-class LoginScreen extends StatefulWidget {
-  @override
-  _LoginScreenState createState() => _LoginScreenState();
-}
+import 'package:sac/viewModel/login_view_model.dart';
+import 'package:stacked/stacked.dart';
+import 'package:sac/components/busybutton.dart';
 
 
-class _LoginScreenState extends State<LoginScreen> {
+class LoginView extends StatelessWidget {
+  TextEditingController emailCtrl = TextEditingController();
+  TextEditingController passwordCtrl = TextEditingController();
   @override
   Widget build(BuildContext context) {
-
     Size size= MediaQuery.of(context).size;
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-      ),
-      child: MaterialApp(
-        theme: ThemeData(
-          fontFamily: "Oswald"
-        ),
-        home: Scaffold(
-          backgroundColor: Colors.blueAccent,
-          body: Stack(
+    return ViewModelBuilder<LoginViewModel>.reactive(
+      viewModelBuilder: () => LoginViewModel(),
+
+      builder: (context, model, child) => Scaffold(
+        body: Padding(
+
+          padding: const EdgeInsets.symmetric(horizontal: 50.0),
+          child: Column(
+
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-          Container(
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  SizedBox(height: size.height*0.3),
-                  Text(
-                    "LOGIN",
-                    style: TextStyle(fontWeight: FontWeight.bold,fontSize: 36),
-                  ),
-                  SizedBox(height: size.height*0.03),
-                  RoundedInputField(
-                    hintText: "Your Email",
-                    onChanged: (value){},
-                  ),
-                  RoundedPasswordField(
-                    onChanged: (value) {},
-                  ),
-                  SizedBox(height: size.height*0.03),
-                  RoundedButton(
-                    text: "LOGIN",
-                    press: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context){
-                            return LoginScreen();
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                  AlreadyHaveAnAccountCheck(
-                    press: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context){
-                            return SignUp();
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                ],
+              Text(
+                "SIGNUP",
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-            ),
-          )
+              SizedBox(height: size.height*0.03),
+              InputRound(
+                controller: emailCtrl,
+                deco: InputDecoration(
+                    hintText: 'Email',
+                    border: InputBorder.none,
+                    icon: Icon(Icons.email,color: kPrimaryColor,)
+                ),
+              ),
+              SizedBox(height: size.height*0.03),
+              InputPasswordRound(
+                controller: passwordCtrl,
+
+              ),
+              SizedBox(height: size.height*0.03),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  BusyButton(
+                    title: 'Sign Up',
+                    busy: model.busy,
+                    onPressed: () {
+                      model.login(email: emailCtrl.text,
+                          password: passwordCtrl.text);
+
+                    },
+                  )
+                ],
+              )
             ],
           ),
         ),
       ),
     );
-
   }
 }
 
-
-/*class LoginScreen extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Body(),
-    );
-  }
-}*/
 
