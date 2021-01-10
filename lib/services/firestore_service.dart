@@ -1,3 +1,4 @@
+/*
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
@@ -6,9 +7,13 @@ import 'package:flutter/services.dart';
 
 class FirestoreService {
   final CollectionReference _usersCollectionReference = Firestore.instance.collection('users');
-  /*final CollectionReference _postsCollectionReference = Firestore.instance.collection('posts');*/
+  */
+/*final CollectionReference _postsCollectionReference = Firestore.instance.collection('posts');*//*
 
-  /*final StreamController<List<Post>> _postsController = StreamController<List<Post>>.broadcast();*/
+
+  */
+/*final StreamController<List<Post>> _postsController = StreamController<List<Post>>.broadcast();*//*
+
 
   Future createUser(Users user) async {
     try {
@@ -37,7 +42,8 @@ class FirestoreService {
     }
   }
 
-  /*Future addPost(Post post) async {
+  */
+/*Future addPost(Post post) async {
     try {
       await _postsCollectionReference.add(post.toMap());
     } catch (e) {
@@ -48,9 +54,11 @@ class FirestoreService {
 
       return e.toString();
     }
-  }*/
+  }*//*
 
-  /*Future getPostsOnceOff() async {
+
+  */
+/*Future getPostsOnceOff() async {
     try {
       var postDocumentSnapshot = await _postsCollectionReference.getDocuments();
       if (postDocumentSnapshot.documents.isNotEmpty) {
@@ -67,9 +75,11 @@ class FirestoreService {
 
       return e.toString();
     }
-  }*/
+  }*//*
 
-  /*Stream listenToPostsRealTime() {
+
+  */
+/*Stream listenToPostsRealTime() {
     // Register the handler for when the posts data changes
     _postsCollectionReference.snapshots().listen((postsSnapshot) {
       if (postsSnapshot.documents.isNotEmpty) {
@@ -84,13 +94,17 @@ class FirestoreService {
     });
 
     return _postsController.stream;
-  }*/
+  }*//*
 
-  /*Future deletePost(String documentId) async {
+
+  */
+/*Future deletePost(String documentId) async {
     await _postsCollectionReference.document(documentId).delete();
   }
-*/
-  /*Future updatePost(Post post) async {
+*//*
+
+  */
+/*Future updatePost(Post post) async {
     try {
       await _postsCollectionReference
           .document(post.documentId)
@@ -103,5 +117,6 @@ class FirestoreService {
 
       return e.toString();
     }
-  }*/
-}
+  }*//*
+
+}*/

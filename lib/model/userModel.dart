@@ -1,4 +1,21 @@
 class Users {
+  final String id;
+  Users({this.id});
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+class Users {
   String id;
   String address;
   String email;
@@ -34,3 +51,4 @@ class Users {
     }
   }
 
+*/
