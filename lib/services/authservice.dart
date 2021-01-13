@@ -52,22 +52,10 @@ class AuthenticationService {
     }
   }
 
-  Future regComplaint(String date, String detail, double lat, double long,int priority,String species,String subject, String UID) async {
+  Future regComplaint(String date, String detail, double lat, double long,int priority,String species,String subject) async {
     try {
-      Firestore.instance.collection('complaint').document()
-          .setData({
-        'Date': date,
-        'Detail': detail,
-        'Lat' : lat,
-        'Long' : long,
-        'Priority' : priority,
-        'Species' : species,
-        'Status' : 'On-Going',
-        'Subject' : subject,
-        'UserID' : UID,
-          });
-      /*await DatabaseService(uid: user.uid).updateAuthoritiesData(email, password, name, address, phoneNo);
-      return _userFromFirebaseUser(user);*/
+      userid = (await FirebaseAuth.instance.currentUser()).uid;
+      await DatabaseService(uid: userid).updateComplaintData(date, detail, lat, long,priority,species,subject,userid);
     } catch (e) {
       print(e.toString());
       return null;

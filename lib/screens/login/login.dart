@@ -91,21 +91,7 @@ class _LoginViewState extends State<LoginView> {
 
                       ),
                       SizedBox(height: size.height*0.03),
-                      /*Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          BusyButton(
-                            title: 'Sign Up',
-                            busy: model.busy,
-                            onPressed: () {
-                              model.login(email: emailCtrl.text,
-                                  password: passwordCtrl.text);
 
-                            },
-                          )
-                        ],
-                      )*/
                     ],
                   ),
                 ),

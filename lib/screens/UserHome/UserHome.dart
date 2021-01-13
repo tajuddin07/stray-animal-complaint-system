@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sac/services/authservice.dart';
 import 'package:flutter/animation.dart';
 import 'package:sac/screens/complaint/complaint.dart';
+import 'package:sac/screens/Wrapper.dart';
 class Dashboard extends StatefulWidget {
   final appTitle = 'Stray Animal Complaint';
   @override
@@ -18,9 +19,10 @@ class _DashboardState extends State<Dashboard> {
   String email;
   FirebaseUser user;
   Future<FirebaseUser> _user = FirebaseAuth.instance.currentUser();
-  TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
-
+  TextStyle style = TextStyle(fontFamily: 'Oswald', fontSize: 20.0);
   final AuthenticationService _auth = AuthenticationService();
+
+
 
   @override
   void initState() {
@@ -131,8 +133,10 @@ class _DashboardState extends State<Dashboard> {
     fetchComplaint() {
       return   Firestore.instance
           .collection("complaint")
+          .where("User ID", isEqualTo:user.uid )
           .snapshots();
     }
+
 
 
     Size size = MediaQuery.of(context).size;
@@ -148,8 +152,88 @@ class _DashboardState extends State<Dashboard> {
       print(role);
     }
 
+
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Stray Animal Complaint System'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: () async{
+              {
+                  //register .. send data  to authservices
+                  dynamic result = await _auth.signOut();
+                  if(result=null){
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false, // user must tap button!
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Sucessfully Logout"),
+                          content: SingleChildScrollView(
+                            child: ListBody(
+                              children: <Widget>[
+                                Text('Please login!'),
+                              ],
+                            ),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('OK'),
+                              onPressed: () async {Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) => Wrapper(),
+                                ),
+                                    (route) => false,
+                              );},
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                  else{
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false, // user must tap button!
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Failed to logout'),
+                          content: SingleChildScrollView(
+                            child: ListBody(
+                              children: <Widget>[
+                                Text('Try again later'),
+                              ],
+                            ),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('OK'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                }
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.navigate_next),
+            tooltip: 'Next page',
+            onPressed: () {
+              /*openPage(context)*/;
+            },
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
+         heroTag: Icons.add,
           onPressed:(){
          Navigator.push(
           context,
@@ -160,11 +244,11 @@ class _DashboardState extends State<Dashboard> {
       } ),
       resizeToAvoidBottomPadding: false,
       body:Container(
-        color: Colors.black12,
+        color: Colors.lightBlueAccent,
         child: Column(
           children:<Widget> [
             SizedBox(height: 15.0),
-            Center(child: Text('Complaint List', textAlign: TextAlign.center,
+            Center(child: Text(' My Complaint List', textAlign: TextAlign.center,
                 style: style)),
             SizedBox(height: 10.0),
             Container(
@@ -241,44 +325,14 @@ class _DashboardState extends State<Dashboard> {
                                                   Text(snapshot.data.documents[i]["Species"]),
                                                   IconButton(
                                                     icon: Icon(Icons.auto_awesome_motion),
-                                                    onPressed: (){
-                                                      // Navigator.push(
-                                                      //   context,
-                                                      //   MaterialPageRoute(
-                                                      //       builder: (context) =>
-                                                      //           StudentEdit(snapshot
-                                                      //               .data.documents[i])),
-                                                      // );
-                                                    },
+                                                    onPressed: (){},
                                                   )
                                                 ],
                                               ),
-
                                             ],
                                           )
                                       ),
                                     ),
-
-                                    // Row(
-                                    //   children: [
-                                    //     IconButton(
-                                    //         icon: Icon(Icons.edit),
-                                    //         onPressed: () {
-                                    //           Navigator.push(
-                                    //             context,
-                                    //             MaterialPageRoute(
-                                    //                 builder: (context) =>
-                                    //                     StudentUpdate(snapshot
-                                    //                         .data.docs[i])),
-                                    //           );
-                                    //         }),
-                                    //     IconButton(
-                                    //       icon: Icon(Icons.delete),
-                                    //       onPressed: (){
-                                    //         deleteStudent(i);
-                                    //       },
-                                    //     )                                      ],
-                                    // ),
                                   ],
                                 ),
                               ),
@@ -292,25 +346,7 @@ class _DashboardState extends State<Dashboard> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Business',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'School',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
-      ),
     );
+
   }
 }

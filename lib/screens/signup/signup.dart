@@ -6,7 +6,7 @@ import 'package:sac/screens/login/login.dart';
 import 'package:sac/services/authservice.dart';
 import 'package:sac/components/busybutton.dart';
 import 'package:flutter/services.dart';
-
+import 'package:sac/screens/Wrapper.dart';
 
 class SignUpView extends StatefulWidget {
   final Function toggleView;
@@ -120,48 +120,41 @@ class _SignUpViewState extends State<SignUpView> {
                         dynamic result = await _auth.regUser(emailCtrl.text, passwordCtrl.text, nameCtrl.text,addressCtrl.text ,PhoneNoCtrl.text );
                        if(result!=null){
                         showDialog(
-                        context: context,
-                        barrierDismissible: false, // user must tap button!
-                           builder: (BuildContext context) {
+                          context: context,
+                          barrierDismissible: false, // user must tap button!
+                          builder: (BuildContext context) {
                             return AlertDialog(
-                                    title: Text('Successfully Registered'),
-                                    content: SingleChildScrollView(
-                                      child: ListView(
-                                        children: <Widget>[
-                                          Text('Continue to login'),
-                                        ],
-                                      ),
-                                    ),
-                                  actions: <Widget>[
-                                  TextButton(
-                                  child: Text('OK'),
-                                  onPressed: () async {
-                                    dynamic result = await _auth.signOut();
-                                    if (result == null) {
-                                       int i = 1;
-                                    print(i.toString());
-                                    Navigator.pushAndRemoveUntil(
-                                    context,
-                                     MaterialPageRoute(
-                                         builder: (BuildContext context) =>
-                                        LoginView(),
-                                        ),
-                                          (route) => false,
-                                        );
-                                     }
-                                   },
-                                ),
+                              title: Text("You've successfully registered"),
+                              content: SingleChildScrollView(
+                                child: ListBody(
+                                  children: <Widget>[
+                                    Text('Please login!'),
                                   ],
-                               );
-                              },
-                         );}
+                                ),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () async {Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) => Wrapper(),
+                                    ),
+                                        (route) => false,
+                                  );},
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                         }
                        else{
                         showDialog(
                           context: context,
                           barrierDismissible: false, // user must tap button!
                           builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text('This account already been used'),
+                            title: Text('The email is invalid'),
                             content: SingleChildScrollView(
                             child: ListBody(
                           children: <Widget>[

@@ -40,14 +40,17 @@ class DatabaseService {
         });
   }
 
-  Future updateComplaintData(DateTime date, String detail,double lat,double long,int priority, String subject, String uid) async {
-    return await ComplaintCollection.document(uid).setData(
+  Future updateComplaintData(String date, String detail,double lat,double long,int priority,String species ,String subject, String userid) async {
+
+    return await ComplaintCollection.document().setData(
         {
           'Date': date,
           'Detail': detail,
           'Lat': lat,
           'Long' : long,
           'Priority' :priority,
+          'Species' : species,
+          'Status' : "On-Going",
           'Subject' : subject,
           'User ID' : uid,
 
