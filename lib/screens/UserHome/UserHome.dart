@@ -326,9 +326,15 @@ class _DashboardState extends State<Dashboard> {
                                                 children: [
                                                   Text("Species: "),
                                                   Text(snapshot.data.documents[i]["Species"]),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
                                                   IconButton(
-                                                    icon: Icon(Icons.auto_awesome_motion),
-                                                    onPressed: (){},
+                                                    icon: Icon(Icons.delete),
+                                                    onPressed: ()async{
+                                                      /*dynamic result = _auth.deleteComplaint();*/
+                                                    },
                                                   )
                                                 ],
                                               ),
