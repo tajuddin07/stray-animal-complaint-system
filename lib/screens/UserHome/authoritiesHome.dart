@@ -234,7 +234,7 @@ class _DashboardAuthState extends State<DashboardAuth> {
         child: Column(
           children:<Widget> [
             SizedBox(height: 15.0),
-            Center(child: Text(' My Complaint List', textAlign: TextAlign.center,
+            Center(child: Text(' Complaint List', textAlign: TextAlign.center,
                 style: style)),
             SizedBox(height: 10.0),
             Container(

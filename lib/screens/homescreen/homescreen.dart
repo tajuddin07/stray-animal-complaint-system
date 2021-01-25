@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sac/components/rounded_button.dart';
 import 'package:sac/screens/login/login.dart';
+import 'package:sac/screens/signup/authoritiesSignup.dart';
 import 'package:sac/screens/signup/signup.dart';
 import 'package:sac/services/authservice.dart';
 class Home extends StatelessWidget {
@@ -30,7 +31,7 @@ class Home extends StatelessWidget {
                     "Animal Complaint System",
                     style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,color: Colors.black),
                   ),
-                  SizedBox(height: size.height*0.5),
+                  SizedBox(height: size.height*0.3),
                   RoundedButton(
                     text: "LOGIN",
                     press: (){
@@ -54,6 +55,21 @@ class Home extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (context) {
                             return SignUpView();
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  RoundedButton(
+                    text: "SIGNUP FOR AUTHORITIES",
+                    color: Colors.white60,
+                    textColor: Colors.black,
+                    press: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return SignUpAuthView();
                           },
                         ),
                       );

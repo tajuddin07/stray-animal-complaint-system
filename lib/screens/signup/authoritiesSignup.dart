@@ -6,16 +6,15 @@ import 'package:sac/screens/login/login.dart';
 import 'package:sac/services/authservice.dart';
 import 'package:sac/components/busybutton.dart';
 import 'package:flutter/services.dart';
-
-
-class SignUpView extends StatefulWidget {
+import 'package:sac/screens/Wrapper.dart';
+class SignUpAuthView extends StatefulWidget {
   final Function toggleView;
-  SignUpView({this.toggleView});
+  SignUpAuthView({this.toggleView});
   @override
-  _SignUpViewState createState() => _SignUpViewState();
+  _SignUpAuthViewState createState() => _SignUpAuthViewState();
 }
 
-class _SignUpViewState extends State<SignUpView> {
+class _SignUpAuthViewState extends State<SignUpAuthView> {
 
   TextStyle style = TextStyle(fontFamily: 'Oswald', fontSize: 20.0);
   final AuthenticationService _auth = AuthenticationService();
@@ -61,7 +60,7 @@ class _SignUpViewState extends State<SignUpView> {
                       child: Column(
                         children: <Widget>[
                           Text(
-                            "SIGNUP",
+                            "SIGNUP AUTHORITIES",
                             style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),
                           ),
                           SizedBox(height: size.height*0.02),
@@ -117,51 +116,44 @@ class _SignUpViewState extends State<SignUpView> {
                     onPressed: () async {
                       if (formKey.currentState.validate()) {
                         //register .. send data  to authservices
-                        dynamic result = await _auth.regUser(emailCtrl.text, passwordCtrl.text, nameCtrl.text,addressCtrl.text ,PhoneNoCtrl.text );
+                        dynamic result = await _auth.regAuthorities(emailCtrl.text, passwordCtrl.text, nameCtrl.text,addressCtrl.text ,PhoneNoCtrl.text );
                         if(result!=null){
                           showDialog(
                             context: context,
                             barrierDismissible: false, // user must tap button!
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text('Successfully Registered'),
+                                title: Text("You've successfully registered"),
                                 content: SingleChildScrollView(
-                                  child: ListView(
+                                  child: ListBody(
                                     children: <Widget>[
-                                      Text('Continue to login'),
+                                      Text('Please login!'),
                                     ],
                                   ),
                                 ),
                                 actions: <Widget>[
                                   TextButton(
                                     child: Text('OK'),
-                                    onPressed: () async {
-                                      dynamic result = await _auth.signOut();
-                                      if (result == null) {
-                                        int i = 1;
-                                        print(i.toString());
-                                        Navigator.pushAndRemoveUntil(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                LoginView(),
-                                          ),
-                                              (route) => false,
-                                        );
-                                      }
-                                    },
+                                    onPressed: () async {Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) => Wrapper(),
+                                      ),
+                                          (route) => false,
+                                    );},
                                   ),
                                 ],
                               );
                             },
-                          );}
+                          );
+                        }
                         else{
                           showDialog(
                             context: context,
                             barrierDismissible: false, // user must tap button!
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text('This account already been used'),
+                                title: Text('The email is invalid'),
                                 content: SingleChildScrollView(
                                   child: ListBody(
                                     children: <Widget>[
@@ -205,5 +197,3 @@ class _SignUpViewState extends State<SignUpView> {
     );
   }
 }
-
-

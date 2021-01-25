@@ -1,17 +1,21 @@
 import 'dart:core';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sac/components/rounded_input_field.dart';
 import 'package:provider/provider.dart';
 import 'package:sac/model/userModel.dart';
 import 'package:sac/components/busybutton.dart';
 import 'package:sac/screens/UserHome/UserHome.dart';
+import 'package:sac/screens/complaint/geo.dart';
 import 'package:sac/services/authservice.dart';
 import 'package:sac/constant.dart';
 import 'package:sac/screens/login/login.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sac/screens/Wrapper.dart';
-
+import 'package:flutter_geofence/geofence.dart';
+import 'package:flutter_geofence/Geolocation.dart';
 
 class Complaint extends StatefulWidget {
   final Function toggleView;
@@ -25,8 +29,8 @@ class _ComplaintState extends State<Complaint> {
 
   String species;
   List <String> animals = ['Dog', 'Cat',];
-
-
+  String c1,c2,c3;
+  int radius;
 
   final FirebaseAuth auth = FirebaseAuth.instance;
   String uid;
@@ -163,9 +167,19 @@ class _ComplaintState extends State<Complaint> {
     return priority;
   }
 
+  int findRadius(int priority){
+    int radius;
+  if(priority==1){radius=51;}
+  else if(priority==2){radius=49;}
+  else if(priority==3){radius=40;}
+  else if(priority==4){radius=50;}
+  else if(priority==5){radius=51;}
+  return radius;
+  }
 
   final formKey = GlobalKey<FormState>();
-
+  GoogleMapController mapController;
+  final LatLng center = const LatLng(45.521563, -122.677433);
   TextEditingController subjectCtrl = TextEditingController();
   TextEditingController detailCtrl = TextEditingController();
   TextEditingController latCtrl = TextEditingController();
@@ -173,6 +187,12 @@ class _ComplaintState extends State<Complaint> {
   TextEditingController speciesCtrl = TextEditingController();
   bool dataFilled = false;
   String date = new DateFormat.yMMMd().format(new DateTime.now());
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<Users>(context);
@@ -184,7 +204,7 @@ class _ComplaintState extends State<Complaint> {
       backgroundColor: Colors.lightBlue,
       resizeToAvoidBottomPadding: false,
         appBar: AppBar(
-          title: const Text('AppBar Demo'),
+          title: const Text('Stray Animal Complaint System'),
           actions: <Widget>[
             IconButton(
               icon: const Icon(Icons.add_alert),
@@ -326,8 +346,96 @@ class _ComplaintState extends State<Complaint> {
                           ),
 
                           SizedBox(height: size.height*0.02),
-                          TextField(
+                          DropdownButton<String>
+                            (
+                            value: c1,
+                              items:[
+                                DropdownMenuItem<String>(
+                                    value: '1',
+                                    child: Text("Showing their teeth,drooling saliva, walked abnormally"),
+                                ),
+                                DropdownMenuItem<String>(
+                                  value: '2',
+                                  child: Text("showing their teeth look unhealthy,not drooling, walked abnormally"),
+                                ),
+                                DropdownMenuItem<String>(
+                                  value: '3',
+                                  child: Text("not showing their teeth walked abnormally"),
+                                ),
+                                DropdownMenuItem<String>(
+                                  value: '4',
+                                  child: Text("looks normal and walked normally"),
+                                ),
 
+                              ],
+                              onChanged: (_value) {
+                                setState(() {
+                                  c1 = _value;
+                                });
+                              },
+                            hint:Text("Please choose the animal expression")
+                          ),
+                          SizedBox(height: size.height*0.02),
+                          DropdownButton<String>
+                            (
+                              value: c2,
+                              items:[
+                                DropdownMenuItem<String>(
+                                  value: '1',
+                                  child: Text("Very aggressive toward other people,chasing them and attacking them"),
+                                ),
+                                DropdownMenuItem<String>(
+                                  value: '2',
+                                  child: Text("Very aggressive to creature coming near it"),
+                                ),
+                                DropdownMenuItem<String>(
+                                  value: '3',
+                                  child: Text("Making loud noise all the time but don't attack people"),
+                                ),
+                                DropdownMenuItem<String>(
+                                  value: '4',
+                                  child: Text("Littering the area,don't attack, not scared of people"),
+                                ),
+                                DropdownMenuItem<String>(
+                                  value: '5',
+                                  child: Text("Littering the area & run away from people"),
+                                ),
+
+                              ],
+                              onChanged: (_value) {
+                                setState(() {
+                                  c2 = _value;
+                                });
+                              },
+                              hint:Text("Please choose the animal behaviour")
+                          ),
+                          SizedBox(height: size.height*0.02),
+                          DropdownButton<String>
+                            (
+                              value: c3,
+                              items:[
+                                DropdownMenuItem<String>(
+                                  value: '1',
+                                  child: Text("Have poor skin condition/multiple wounds on body and no fur at all"),
+                                ),
+                                DropdownMenuItem<String>(
+                                  value: '2',
+                                  child: Text("Have messy fur condition"),
+                                ),
+                                DropdownMenuItem<String>(
+                                  value: '3',
+                                  child: Text("Have a good fur condition"),
+                                ),
+                              ],
+                              onChanged: (_value) {
+                                setState(() {
+                                  c3 = _value;
+                                });
+                              },
+                              hint:Text("Please choose the animal appearances")
+                          ),
+                          SizedBox(height: size.height*0.02),
+                          TextField(
                             decoration: InputDecoration(fillColor: Colors.white60,hintText: 'Please enter the detail'),
                             keyboardType: TextInputType.multiline,
                             controller: detailCtrl,
@@ -343,10 +451,23 @@ class _ComplaintState extends State<Complaint> {
                   BusyButton(
                     title: 'Submit',
                     onPressed: () async {
-                      if (formKey.currentState.validate()) {
+                      priority = PriorityFilter(int.parse(c1), int.parse(c2),int.parse(c3) );
+                      radius = findRadius(priority);
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => Geo(date: date,detail: detailCtrl.text,priority: priority,species: species,subject: subjectCtrl.text,radius: radius,),
+                        ),
+                            (route) => false,
+                      );
+
+                     /* if (formKey.currentState.validate()) {
+                        priority = PriorityFilter(int.parse(c1), int.parse(c2),int.parse(c3) );
+                        radius = findRadius(priority);
                         //regComplaint .. send data  to authservices
-                        dynamic result = await _auth.regComplaint(date,detailCtrl.text,lat,long,priority,species,subjectCtrl.text);
-                        if(result!=null){
+                        dynamic result = await _auth.regComplaint(date,detailCtrl.text,lat,long,priority,species,subjectCtrl.text,radius);
+                        if(result!= null){
+                          print(result);
                           showDialog(
                             context: context,
                             barrierDismissible: false, // user must tap button!
@@ -376,7 +497,8 @@ class _ComplaintState extends State<Complaint> {
                             },
                           );
                         }
-                        else{
+                        else if(result == null){
+                          print(result);
                           showDialog(
                             context: context,
                             barrierDismissible: false, // user must tap button!
@@ -402,7 +524,7 @@ class _ComplaintState extends State<Complaint> {
                             },
                           );
                         }
-                      }
+                      }*/
                     },
                   ),
 

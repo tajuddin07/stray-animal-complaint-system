@@ -6,10 +6,11 @@ import 'package:sac/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:sac/services/database.dart';
-
+import 'package:sac/screens/Wrapper.dart';
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final Firestore _fs = Firestore.instance;
+  FirebaseUser us ;
   String email = "";
   String userid = "";
   String role = "";
@@ -52,10 +53,10 @@ class AuthenticationService {
     }
   }
 
-  Future regComplaint(String date, String detail, double lat, double long,int priority,String species,String subject) async {
+  Future regComplaint(String date, String detail, double lat, double long,int priority,String species,String subject,int radius) async {
     try {
-      userid = (await FirebaseAuth.instance.currentUser()).uid;
-      await DatabaseService(uid: userid).updateComplaintData(date, detail, lat, long,priority,species,subject,userid);
+      userid = (await _firebaseAuth.currentUser()).uid;
+      await DatabaseService(uid: userid).updateComplaintData(date, detail, lat, long,priority,species,subject,radius,userid);
     } catch (e) {
       print(e.toString());
       return null;
@@ -63,7 +64,7 @@ class AuthenticationService {
   }
 
   Future<void> deleteComplaint(DocumentSnapshot doc) async {
-    _fs.collection("complaint").document(doc.documentID).delete();;
+    _fs.collection("complaint").document(doc.documentID).delete();
   }
 
 
@@ -89,6 +90,7 @@ class AuthenticationService {
     }
   }
 
+
  /* Future removeComplaint(String uid) async{
     AuthResult result= await _fs ;
     return ;
@@ -101,63 +103,4 @@ class AuthenticationService {
 
 
 
-/* Future loginWithEmail({
-    @required String email,
-    @required String password,
-  }) async {
-    try {
-      var authResult = await _firebaseAuth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      await _populateCurrentUser(authResult.user);
-      return authResult.user != null;
-    } catch (e) {
-      return e.message;
-    }
-  }*/
 
-/* Future signUpWithEmail({
-    @required String email,
-    @required String password,
-    @required String fullName,
-    @required String phoneNo,
-    @required String address,
-    @required String role,
-
-  }) async {
-    try {
-      var authResult = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      // create a new user profile on firestore
-      _currentUser = Users(
-        id: authResult.user.uid,
-        email: email,
-        name: fullName,
-        role: role,
-        address: address,
-        phoneNo: phoneNo,
-      ) ;
-
-      await _firestoreService.createUser(_currentUser);
-
-      return authResult.user != null;
-    } catch (e) {
-      return e.message;
-    }
-  }*/
-
-/*Future<bool> isUserLoggedIn() async {
-    var user = await _firebaseAuth.currentUser;
-    await _populateCurrentUser(user);
-    return user != null;
-  }
-*/
-/*Future _populateCurrentUser(FirebaseUser user) async {
-    if (user != null) {
-      _currentUser = await _firestoreService.getUser(user.uid);
-    }
-  }*/

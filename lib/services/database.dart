@@ -40,7 +40,7 @@ class DatabaseService {
         });
   }
 
-  Future updateComplaintData(String date, String detail,double lat,double long,int priority,String species ,String subject, String userid) async {
+  Future updateComplaintData(String date, String detail,double lat,double long,int priority,String species ,String subject,int radius ,String userid) async {
 
     return await ComplaintCollection.document().setData(
         {
@@ -52,6 +52,7 @@ class DatabaseService {
           'Species' : species,
           'Status' : "On-Going",
           'Subject' : subject,
+          'Radius' : radius,
           'User ID' : uid,
 
         });

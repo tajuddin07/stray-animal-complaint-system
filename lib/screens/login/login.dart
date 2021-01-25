@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:sac/components/rounded_input_field.dart';
 import 'package:sac/constant.dart';
 import 'package:sac/components/rounded_password_field.dart';
+import 'package:sac/screens/signup/authoritiesSignup.dart';
 import 'package:sac/screens/signup/signup.dart';
 import 'package:sac/services/authservice.dart';
 import 'package:sac/components/busybutton.dart';
 import 'package:sac/screens/Wrapper.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sac/screens/AWrapper.dart';
 
 class LoginView extends StatefulWidget {
   final Function toggleView;
@@ -50,6 +52,26 @@ class _LoginViewState extends State<LoginView> {
     ),
   );
 
+  final registButtonAuth = Material(
+    elevation: 2.0,
+    borderRadius: BorderRadius.circular(30.0),
+    color: Colors.purple,
+    child: MaterialButton(
+      minWidth: MediaQuery.of(context).size.width * 0.6,
+      padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 5.0),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => SignUpAuthView()),
+        ); //signup screen
+      },
+      child: Text("Register for Authorities",
+          textAlign: TextAlign.center,
+          style: style.copyWith(
+              color: Colors.white, fontWeight: FontWeight.bold)),
+    ),
+  );
+
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       body: Container(
@@ -74,9 +96,9 @@ class _LoginViewState extends State<LoginView> {
                     children: <Widget>[
                       Text(
                         "LOGIN",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(fontWeight: FontWeight.bold,fontSize: 24),
                       ),
-                      SizedBox(height: size.height*0.03),
+                      SizedBox(height: size.height*0.1),
                       InputRound(
                         controller: emailCtrl,
                         deco: InputDecoration(
@@ -108,14 +130,6 @@ class _LoginViewState extends State<LoginView> {
                     onPressed: () async {
                       if (formKey.currentState.validate()) {
                         dynamic result = await _auth.signInUser(emailCtrl.text, passwordCtrl.text);
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (BuildContext context) => Wrapper(),
-                          ),
-                              (route) => false,
-                        );
-                         print(result.uid);
                         if (result == null) {
                           showDialog(
                             context: context,
@@ -142,6 +156,36 @@ class _LoginViewState extends State<LoginView> {
                             },
                           );
                         }
+                        else if(result!= null){
+                          //print("sdsds   "+result.id);
+
+                          var document = await Firestore.instance.collection('users')
+                              .document(result.id)
+                              .get();
+
+                          if(document!=null){
+                            String role = document.data['Role'].toString();
+                            print(role);
+                            if(role == 'User'){
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) => Wrapper(),
+                                ),
+                                    (route) => true,
+                              );
+                            }
+                            else if(role == 'Authorities'){
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) => AWrapper(),
+                                ),
+                                    (route) => true,
+                              );
+                            }
+                          }
+                        }
                       }
                     },
                     child: Text("Login",
@@ -154,9 +198,8 @@ class _LoginViewState extends State<LoginView> {
                   height: 15.0,
                 ),
                 registButton,
-                SizedBox(
-                  height: 15.0,
-                ),
+                SizedBox(height: 15.0,),
+                registButtonAuth,
               ],
             ),
           ),
