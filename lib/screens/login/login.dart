@@ -82,7 +82,6 @@ class _LoginViewState extends State<LoginView> {
           ),
         ),
         child: Container(
-          color: Colors.lightBlue,
           child: Padding(
             padding: const EdgeInsets.all(25.0),
             child: Column(
@@ -96,7 +95,7 @@ class _LoginViewState extends State<LoginView> {
                     children: <Widget>[
                       Text(
                         "LOGIN",
-                        style: TextStyle(fontWeight: FontWeight.bold,fontSize: 24),
+                        style: TextStyle(fontWeight: FontWeight.bold,fontSize: 24,color: Colors.white70),
                       ),
                       SizedBox(height: size.height*0.1),
                       InputRound(

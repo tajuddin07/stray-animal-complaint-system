@@ -14,9 +14,14 @@ class Home extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/bg.jpg"),
+            fit: BoxFit.fill,
+          ),
+        ),
         child: Container(
           alignment: Alignment.center,
-          color: Colors.lightBlue,
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
