@@ -16,7 +16,7 @@ class Home extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/bg.jpg"),
+            image: AssetImage("assets/images/bg.jpg"),
             fit: BoxFit.fill,
           ),
         ),
@@ -36,7 +36,15 @@ class Home extends StatelessWidget {
                     "Animal Complaint System",
                     style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,color: Colors.black),
                   ),
-                  SizedBox(height: size.height*0.3),
+                  Container(
+                    width: 150,
+                    height: 150,
+                    child: Image.asset(
+                      "assets/images/catsleep.png",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  SizedBox(height: size.height*0.1),
                   RoundedButton(
                     text: "LOGIN",
                     press: (){
