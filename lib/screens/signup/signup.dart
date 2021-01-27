@@ -38,7 +38,7 @@ class _SignUpViewState extends State<SignUpView> {
         child: Container(
           /*decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage("assets/bg2.jpg"),
+              image: AssetImage("assets/images/bg2.jpg"),
               fit: BoxFit.cover,
             ),
           ),*/

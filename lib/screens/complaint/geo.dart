@@ -7,7 +7,7 @@ import 'package:geolocator/geolocator.dart'as a;
 import 'package:location/location.dart';
 import 'package:sac/services/authservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_geofence/geofence.dart';
+
 final FirebaseAuth auth = FirebaseAuth.instance;
 FirebaseUser user;
 TextStyle style = TextStyle(fontFamily: 'Oswald', fontSize: 20.0);
@@ -42,7 +42,7 @@ class _GeoState extends State<Geo> {
     _location.onLocationChanged.listen((l) {
       _controller.animateCamera(
         CameraUpdate.newCameraPosition(
-          CameraPosition(target: LatLng(l.latitude, l.longitude),zoom: 2000),
+          CameraPosition(target: LatLng(l.latitude, l.longitude),zoom: 10),
         ),
       );
     });
@@ -110,7 +110,7 @@ class _GeoState extends State<Geo> {
             height: MediaQuery.of(context).size.height*0.8,
             width: MediaQuery.of(context).size.width,
             child: GoogleMap(
-              initialCameraPosition: CameraPosition(target: _initialcameraposition,zoom: 130),
+              initialCameraPosition: CameraPosition(target: _initialcameraposition,zoom: 17),
               markers: Set.from(myMarker),
               onMapCreated: mapCreated,
               onTap: _handleTap,
@@ -118,23 +118,13 @@ class _GeoState extends State<Geo> {
           ),
             Align(
               alignment: Alignment.bottomCenter,
-              child: InkWell(
-                child: Container(
-                    height: 40.0,
-                    width: 200.0,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0),
-                        color: Colors.green
-                    ),
-                ),
-              ),
-            ),
-            FloatingActionButton(
-                heroTag: Icons.add,
-                onPressed:()async{
-                  //regComplaint .. send data  to authservices
-                  dynamic result = await _auth.regComplaint(widget.date,widget.detail,lat,long,widget.priority,widget.species,widget.subject,widget.radius);
-                  if(result!= null){
+              child:  FloatingActionButton.extended(
+                  heroTag: Icons.add,
+                  icon: Icon(Icons.add),
+                  label : Text("Add Complaint"),
+                  onPressed:()async{
+                    //regComplaint .. send data  to authservices
+                    dynamic result = await _auth.regComplaint(widget.date,widget.detail,lat,long,widget.priority,widget.species,widget.subject,widget.radius);
                     print(result);
                     showDialog(
                       context: context,
@@ -164,35 +154,10 @@ class _GeoState extends State<Geo> {
                         );
                       },
                     );
-                  }
-                  else if(result == null){
-                    print(result);
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false, // user must tap button!
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('The email is invalid'),
-                          content: SingleChildScrollView(
-                            child: ListBody(
-                              children: <Widget>[
-                                Text('Use other email account'),
-                              ],
-                            ),
-                          ),
-                          actions: <Widget>[
-                            TextButton(
-                              child: Text('OK'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
-                } ),
+
+                  } ),
+            ),
+
             SizedBox(
               height: 25.0,
             )

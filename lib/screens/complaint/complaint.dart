@@ -167,13 +167,41 @@ class _ComplaintState extends State<Complaint> {
     return priority;
   }
 
-  int findRadius(int priority){
+  int findRadius(int priority,String species){
     int radius;
-  if(priority==1){radius=51;}
-  else if(priority==2){radius=49;}
-  else if(priority==3){radius=40;}
-  else if(priority==4){radius=50;}
-  else if(priority==5){radius=51;}
+  if(priority==1)
+  {
+    if(species=="Cat")
+    radius=8000;
+    else if (species=="Dog")
+      radius= 16000;
+  }else if(priority==2)
+  {
+    if(species=="Cat")
+      radius=7000;
+    else if (species=="Dog")
+      radius= 15000;
+  }else if(priority==3)
+  {
+    if(species=="Cat")
+      radius=2500;
+    else if (species=="Dog")
+      radius= 13000;
+  }else if(priority==4)
+  {
+    if(species=="Cat")
+      radius=2000;
+    else if (species=="Dog")
+      radius= 10000;
+  }else
+    if(priority==5)
+    {
+      if(species=="Cat")
+        radius=1000;
+      else if (species=="Dog")
+        radius= 8000;
+    }
+
   return radius;
   }
 
@@ -207,14 +235,14 @@ class _ComplaintState extends State<Complaint> {
           title: const Text('Stray Animal Complaint System'),
           actions: <Widget>[
             IconButton(
-              icon: const Icon(Icons.add_alert),
+              icon: const Icon(Icons.logout),
               tooltip: 'Show Snackbar',
               onPressed: () async{
                 {
                   if (formKey.currentState.validate()) {
                     //register .. send data  to authservices
                     dynamic result = await _auth.signOut();
-                    if(result!=null){
+                    if(result==null){
                       showDialog(
                         context: context,
                         barrierDismissible: false, // user must tap button!
@@ -234,7 +262,7 @@ class _ComplaintState extends State<Complaint> {
                                 onPressed: () async {Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (BuildContext context) => Wrapper(),
+                                    builder: (BuildContext context) => LoginView(),
                                   ),
                                       (route) => false,
                                 );},
@@ -250,11 +278,11 @@ class _ComplaintState extends State<Complaint> {
                         barrierDismissible: false, // user must tap button!
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text('The email is invalid'),
+                            title: Text('Fail to logout'),
                             content: SingleChildScrollView(
                               child: ListBody(
                                 children: <Widget>[
-                                  Text('Use other email account'),
+                                  Text('Something happen'),
                                 ],
                               ),
                             ),
@@ -452,7 +480,7 @@ class _ComplaintState extends State<Complaint> {
                     title: 'Submit',
                     onPressed: () async {
                       priority = PriorityFilter(int.parse(c1), int.parse(c2),int.parse(c3) );
-                      radius = findRadius(priority);
+                      radius = findRadius(priority,species);
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
@@ -461,70 +489,6 @@ class _ComplaintState extends State<Complaint> {
                             (route) => false,
                       );
 
-                     /* if (formKey.currentState.validate()) {
-                        priority = PriorityFilter(int.parse(c1), int.parse(c2),int.parse(c3) );
-                        radius = findRadius(priority);
-                        //regComplaint .. send data  to authservices
-                        dynamic result = await _auth.regComplaint(date,detailCtrl.text,lat,long,priority,species,subjectCtrl.text,radius);
-                        if(result!= null){
-                          print(result);
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false, // user must tap button!
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text("Complaint Succesfully issued"),
-                                content: SingleChildScrollView(
-                                  child: ListBody(
-                                    children: <Widget>[
-                                      Text('Tap OK to return to Dashbaord'),
-                                    ],
-                                  ),
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: Text('OK'),
-                                    onPressed: () async {Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (BuildContext context) => Dashboard(),
-                                      ),
-                                          (route) => false,
-                                    );},
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        }
-                        else if(result == null){
-                          print(result);
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false, // user must tap button!
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('The email is invalid'),
-                                content: SingleChildScrollView(
-                                  child: ListBody(
-                                    children: <Widget>[
-                                      Text('Use other email account'),
-                                    ],
-                                  ),
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: Text('OK'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        }
-                      }*/
                     },
                   ),
 

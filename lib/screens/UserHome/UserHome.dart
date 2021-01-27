@@ -8,6 +8,9 @@ import 'package:flutter/animation.dart';
 import 'package:sac/screens/complaint/complaint.dart';
 import 'package:sac/screens/Wrapper.dart';
 import 'package:sac/screens/complaint/geo.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 
 class Dashboard extends StatefulWidget {
   final appTitle = 'Stray Animal Complaint';
@@ -24,7 +27,8 @@ class _DashboardState extends State<Dashboard> {
   Future<FirebaseUser> _user = FirebaseAuth.instance.currentUser();
   TextStyle style = TextStyle(fontFamily: 'Oswald', fontSize: 20.0);
   final AuthenticationService _auth = AuthenticationService();
-
+  GoogleMapController _controller;
+  Position ps;
 
 
   @override
@@ -32,7 +36,11 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
     initUser();
   }
-
+  void mapCreated(controller) {
+    setState(() {
+      _controller = controller;
+    });
+  }
   initUser() async {
     user = await auth.currentUser();
     setState(() {});
@@ -57,81 +65,10 @@ class _DashboardState extends State<Dashboard> {
     ),
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
 
-    final shome = Material(
-      elevation: 5.0,
-      borderRadius: BorderRadius.circular(30.0),
-      color: Color(0xff01A0C7),
-      child: MaterialButton(
-        minWidth: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () async {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => Dashboard(),
-            ),
-                (route) => false,
-          );
-        },
-        child: Text("Home",
-            textAlign: TextAlign.center,
-            style: style.copyWith(
-                color: Colors.white, fontWeight: FontWeight.bold)),
-      ),
-    );
-
-
-
-    final logout = Material(
-      elevation: 5.0,
-      borderRadius: BorderRadius.circular(30.0),
-      color: Colors.red,
-      child: MaterialButton(
-        minWidth: MediaQuery.of(context).size.width * 0.3,
-        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () async {
-          dynamic result = await _auth.signOut();
-          if(result == null) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (BuildContext context) => LoginView(),
-              ),
-                  (route) => false,
-            );
-          }
-        },
-        child: Text("Logout",
-            textAlign: TextAlign.center,
-            style: style.copyWith(
-                color: Colors.white, fontWeight: FontWeight.bold)),
-      ),
-    );
-
-    final request = Material(
-      elevation: 5.0,
-      borderRadius: BorderRadius.circular(30.0),
-      color: Color(0xff01A0C7),
-      child: MaterialButton(
-        minWidth: MediaQuery.of(context).size.width * 0.3,
-        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () async {
-        },
-        child: Text("Request",
-            textAlign: TextAlign.center,
-            style: style.copyWith(
-                color: Colors.white, fontWeight: FontWeight.bold)),
-      ),
-    );
 
     fetchComplaint() {
       return   Firestore.instance
@@ -144,16 +81,7 @@ class _DashboardState extends State<Dashboard> {
 
     Size size = MediaQuery.of(context).size;
 
-    getData() async {
-      uid = (await FirebaseAuth.instance.currentUser()).uid;
-      email = (await FirebaseAuth.instance.currentUser()).email;
-      print(uid);
-      var document = await Firestore.instance.collection('USER')
-          .document(uid)
-          .get();
-      role = document.data['role'].toString();
-      print(role);
-    }
+
 
 
     return Scaffold(
@@ -166,8 +94,9 @@ class _DashboardState extends State<Dashboard> {
             onPressed: () async{
               {
                   //register .. send data  to authservices
-                  dynamic result = await _auth.signOut();
-                  if(result=null){
+                  dynamic result1 = await _auth.signOut();
+                  print(result1);
+                  if(result1==null){
                     showDialog(
                       context: context,
                       barrierDismissible: false, // user must tap button!
@@ -187,7 +116,7 @@ class _DashboardState extends State<Dashboard> {
                               onPressed: () async {Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (BuildContext context) => Wrapper(),
+                                  builder: (BuildContext context) => LoginView(),
                                 ),
                                     (route) => false,
                               );},
@@ -235,7 +164,7 @@ class _DashboardState extends State<Dashboard> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
          heroTag: Icons.add,
           onPressed:(){
          Navigator.push(
@@ -244,7 +173,11 @@ class _DashboardState extends State<Dashboard> {
                builder: (context) =>
                    Complaint()),);
 
-      } ),
+      },
+        icon: Icon(Icons.add),
+        label : Text("Add Complaint"),
+      ),
+
       resizeToAvoidBottomPadding: false,
       body:Container(
         color: Colors.lightBlueAccent,
@@ -255,7 +188,7 @@ class _DashboardState extends State<Dashboard> {
                 style: style)),
             SizedBox(height: 10.0),
             Container(
-              height: size.height * 0.8,
+              height: size.height*0.7 ,
               child: StreamBuilder<QuerySnapshot>(
                 stream: fetchComplaint(),
                 builder: (BuildContext context,
@@ -272,7 +205,7 @@ class _DashboardState extends State<Dashboard> {
                             padding: const EdgeInsets.all(5.0),
                             child: Container(
                               decoration: BoxDecoration(
-                                  color: Colors.white
+                                  color: Colors.white70
                               ),
                               width: size.width*1,
                               height: size.height*0.2,
@@ -282,64 +215,141 @@ class _DashboardState extends State<Dashboard> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Card(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20), // if you need this
-                                        side: BorderSide(
-                                          color: Colors.grey.withOpacity(0.2),
-                                          width: 1,
-                                        ),
-                                      ),
+                                      elevation: 8.0,
+                                      margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
                                       child: Container(
-                                          color: Colors.white,
-                                          width: 400,
-                                          height: 100,
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Text("Date: "),
-                                                  Expanded(
-                                                    child: Text(snapshot.data.documents[i]["Date"],
-                                                      maxLines :4,
-                                                      overflow: TextOverflow.ellipsis,
-                                                      textDirection: TextDirection.ltr,
-                                                      textAlign: TextAlign.justify,
-                                                    ),
+                                        decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
+                                        child: ListTile(
+                                          contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                                          leading: Container(
+                                            padding: EdgeInsets.only(right: 12.0),
+                                            decoration: new BoxDecoration(
+                                                border: new Border(
+                                                    right: new BorderSide(width: 1.0, color: Colors.white24))),
+                                            child: Icon(Icons.system_update_alt, color: Colors.white),
+                                          ),
+                                          title: Text(
+                                            snapshot.data.documents[i]["Subject"],
+                                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                          ),
 
-                                                  ),
-                                                ],
+                                          subtitle:Row(
+                                            children: [
+                                              Text("Subject: ",style:TextStyle(color: Colors.white, fontWeight: FontWeight.bold) ,),
+                                              Expanded(
+                                                child:Text(snapshot.data.documents[i]["Detail"],
+                                                  maxLines :2,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  textDirection: TextDirection.ltr,
+                                                  textAlign: TextAlign.justify,
+                                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                                               ),
-                                              Row(
-                                                children: [
-                                                  Text("Detail: "),
-                                                  Text(snapshot.data.documents[i]["Detail"]),
-                                                ],
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Text("Status: "),
-                                                  Text(snapshot.data.documents[i]["Status"]),
-                                                ],
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Text("Species: "),
-                                                  Text(snapshot.data.documents[i]["Species"]),
-                                                ],
-                                              ),
-                                              Row(
-                                                children: [
-                                                  IconButton(
-                                                    icon: Icon(Icons.delete),
-                                                    onPressed: ()async{
-                                                      /*dynamic result = _auth.deleteComplaint();*/
-                                                    },
-                                                  )
-                                                ],
-                                              ),
+                                              )
                                             ],
-                                          )
+                                          ),
+                                          trailing:
+                                          IconButton(icon: Icon(Icons.keyboard_arrow_right, color: Colors.white, size: 30.0),
+                                              onPressed: (){
+                                                myMarker.add(Marker(
+                                                    markerId: MarkerId(snapshot.data.documents[i]["User ID"]),
+                                                    draggable: true,
+                                                    onTap: () {
+                                                    },
+                                                    position: LatLng(snapshot.data.documents[i]["Lat"], snapshot.data.documents[i]["Long"])));
+                                                showDialog(
+                                                  context: context,
+                                                  barrierDismissible: false, // user must tap button!
+                                                  builder: (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: Text(snapshot.data.documents[i]["Subject"]),
+                                                      content: SingleChildScrollView(
+                                                        child: ListBody(
+                                                          children: <Widget>[
+                                                            Container(
+                                                              height: MediaQuery.of(context).size.height*0.5,
+                                                              width: MediaQuery.of(context).size.width,
+                                                              child: GoogleMap(
+                                                                initialCameraPosition: CameraPosition(target:LatLng(snapshot.data.documents[i]["Lat"], snapshot.data.documents[i]["Long"]), zoom: 15.0),
+                                                                onMapCreated: mapCreated,
+                                                                markers: Set.from(myMarker),
+                                                              ),
+                                                            ),
+                                                            SizedBox(height: size.height*0.01),
+                                                            Row(
+                                                              children: [
+                                                                Text("Date: "),
+                                                                Expanded(
+                                                                  child: Text(snapshot.data.documents[i]["Date"],
+                                                                  ),
+
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            SizedBox(height: size.height*0.01),
+                                                            Row(
+                                                              children: [
+                                                                Text("Detail: "),
+                                                                Expanded(
+                                                                  child: Text(snapshot.data.documents[i]["Detail"],
+                                                                    maxLines :4,
+                                                                    overflow: TextOverflow.ellipsis,
+                                                                    textDirection: TextDirection.ltr,
+                                                                    textAlign: TextAlign.justify,
+                                                                  ),
+
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            SizedBox(height: size.height*0.01),
+                                                            Row(
+                                                              children: [
+                                                                Text("Status: "),
+                                                                Text(snapshot.data.documents[i]["Status"]),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      actions: <Widget>[
+                                                        Align(
+                                                          alignment: Alignment.bottomLeft,
+                                                          child: TextButton(
+                                                            child: Text('Back'),
+                                                            onPressed: () {
+                                                              Navigator.of(context).pop();
+                                                            },
+                                                          ),
+                                                        ),
+                                                        Align(
+                                                         /* alignment: Alignment.bottomLeft,
+                                                          child: TextButton(
+                                                            child: Text('Call'),
+                                                            onPressed: () {
+                                                              // Navigator.of(context).pop();
+                                                              UrlLauncher.launch('tel:'+snapshot.data.documents[i]["Phone Number"]);
+                                                            },
+                                                          ),*/
+                                                        ),
+                                                        /*TextButton(
+                                                          child: Text('Route'),
+                                                          onPressed: () async{
+                                                            final availableMaps = await MapLauncher.installedMaps;
+                                                            print(availableMaps); // [AvailableMap { mapName: Google Maps, mapType: google }, ...]
+
+                                                            await availableMaps.first.showMarker(
+                                                              coords: Coords(snapshot.data.documents[i]["latitude"], snapshot.data.documents[i]["longtitude"]),
+                                                              title: snapshot.data.documents[i]["Garage Name"],
+                                                            );
+                                                          },
+                                                        ),*/
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              }
+                                          ),
+
+                                        ),
                                       ),
                                     ),
                                   ],
