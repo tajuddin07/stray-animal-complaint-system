@@ -7,13 +7,13 @@ import 'package:geolocator/geolocator.dart'as a;
 import 'package:location/location.dart';
 import 'package:sac/services/authservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:sac/screens/login/login.dart';
+import 'package:sac/screens/UserHome/UserProfile.dart';
 final FirebaseAuth auth = FirebaseAuth.instance;
 FirebaseUser user;
 TextStyle style = TextStyle(fontFamily: 'Oswald', fontSize: 20.0);
 List<Marker> allMarkers = [];
 List<Marker> myMarker = [];
-LatLng _initialcameraposition = LatLng(2.499930, 102.859573);
 Location _location = Location();
 final a.Geolocator geolocator = a.Geolocator()..forceAndroidLocationManager;
 a.Position _currentPosition;
@@ -101,9 +101,145 @@ class _GeoState extends State<Geo> {
 
   @override
   Widget build(BuildContext context) {
+    LatLng _initialcameraposition = LatLng(_currentPosition.latitude, _currentPosition.longitude);
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Maps'),
+      appBar: AppBar(title: Text("Please enter the last seen area"),),
+      drawer: Theme(
+        data: Theme.of(context).copyWith(
+          canvasColor: Colors.deepPurpleAccent,
+        ),
+        child: Drawer(
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                child: Text(''),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage("assets/images/saclogo.jpeg"),
+                      fit: BoxFit.cover
+                  ),
+                  color: Colors.blue,
+                ),
+              ),
+              FloatingActionButton.extended(
+                  backgroundColor: Colors.blue,
+                  icon: Icon(Icons.home),
+                  heroTag: "homebtn",
+                  label: Text("Home"),
+                  tooltip: 'Show Snackbar',
+                  onPressed: () async {
+                    {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              Dashboard(),
+                        ),
+                            (route) => false,
+                      );
+                    }
+                  }
+              ),
+              SizedBox(height: 10.0),
+              FloatingActionButton.extended(
+                  backgroundColor: Colors.blue,
+                  heroTag: "EditProfilebtn",
+                  icon: Icon(Icons.person),
+                  label: Text("Profile"),
+                  tooltip: 'Show Snackbar',
+                  onPressed: () async {
+                    {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              UpdateProfile(),
+                        ),
+                            (route) => false,
+                      );
+                    }
+                  }
+              ),
+              SizedBox(height: 10.0),
+              FloatingActionButton.extended(
+                  backgroundColor: Colors.blueAccent,
+                  heroTag: "logoutbtn",
+                  icon: Icon(Icons.logout),
+                  label: Text("Logout"),
+                  tooltip: 'Show Snackbar',
+                  onPressed: () async {
+                    {
+                      //register .. send data  to authservices
+                      dynamic result = await _auth.signOut();
+                      if (result == null) {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false, // user must tap button!
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Sucessfully Logout"),
+                              content: SingleChildScrollView(
+                                child: ListBody(
+                                  children: <Widget>[
+                                    Text('Please login!'),
+                                  ],
+                                ),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () async {
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            LoginView(),
+                                      ),
+                                          (route) => false,
+                                    );
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                      else {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false, // user must tap button!
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Fail to logout'),
+                              content: SingleChildScrollView(
+                                child: ListBody(
+                                  children: <Widget>[
+                                    Text('Something happen'),
+                                  ],
+                                ),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    }
+                  }
+              ),
+
+            ],
+          ),
+        ),
       ),
       body: Stack(
           children: [Container(
@@ -128,7 +264,7 @@ class _GeoState extends State<Geo> {
                     print(result);
                     showDialog(
                       context: context,
-                      barrierDismissible: false, // user must tap button!
+                      barrierDismissible: true, // user must tap button!
                       builder: (BuildContext context) {
                         return AlertDialog(
                           title: Text("Complaint Succesfully issued"),

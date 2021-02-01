@@ -16,7 +16,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sac/screens/Wrapper.dart';
 import 'package:flutter_geofence/geofence.dart';
 import 'package:flutter_geofence/Geolocation.dart';
-
+import 'package:sac/screens/UserHome/UserProfile.dart';
 class Complaint extends StatefulWidget {
   final Function toggleView;
   Complaint({this.toggleView});
@@ -229,88 +229,144 @@ class _ComplaintState extends State<Complaint> {
 
 
     return Scaffold(
-      backgroundColor: Colors.lightBlue,
-      resizeToAvoidBottomPadding: false,
-        appBar: AppBar(
-          title: const Text('Stray Animal Complaint System'),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.logout),
-              tooltip: 'Show Snackbar',
-              onPressed: () async{
-                {
-                  if (formKey.currentState.validate()) {
-                    //register .. send data  to authservices
-                    dynamic result = await _auth.signOut();
-                    if(result==null){
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false, // user must tap button!
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text("Sucessfully Logout"),
-                            content: SingleChildScrollView(
-                              child: ListBody(
-                                children: <Widget>[
-                                  Text('Please login!'),
-                                ],
-                              ),
-                            ),
-                            actions: <Widget>[
-                              TextButton(
-                                child: Text('OK'),
-                                onPressed: () async {Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (BuildContext context) => LoginView(),
-                                  ),
-                                      (route) => false,
-                                );},
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
-                    else{
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false, // user must tap button!
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Fail to logout'),
-                            content: SingleChildScrollView(
-                              child: ListBody(
-                                children: <Widget>[
-                                  Text('Something happen'),
-                                ],
-                              ),
-                            ),
-                            actions: <Widget>[
-                              TextButton(
-                                child: Text('OK'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
+      backgroundColor: Colors.indigoAccent[100],
+      appBar: AppBar(title: Text("Add Complaint"),),
+      drawer: Theme(
+        data: Theme.of(context).copyWith(
+          canvasColor: Colors.deepPurpleAccent,
+        ),
+        child: Drawer(
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                child: Text(''),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage("assets/images/saclogo.jpeg"),
+                      fit: BoxFit.cover
+                  ),
+                  color: Colors.blue,
+                ),
+              ),
+              FloatingActionButton.extended(
+                  backgroundColor: Colors.blue,
+                  icon: Icon(Icons.home),
+                  heroTag: "homebtn",
+                  label: Text("Home"),
+                  tooltip: 'Show Snackbar',
+                  onPressed: () async {
+                    {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              Dashboard(),
+                        ),
+                            (route) => false,
                       );
                     }
                   }
-                }
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.navigate_next),
-              tooltip: 'Next page',
-              onPressed: () {
-                /*openPage(context)*/;
-              },
-            ),
-          ],
+              ),
+              SizedBox(height: 10.0),
+              FloatingActionButton.extended(
+                  backgroundColor: Colors.blue,
+                  heroTag: "EditProfilebtn",
+                  icon: Icon(Icons.person),
+                  label: Text("Profile"),
+                  tooltip: 'Show Snackbar',
+                  onPressed: () async {
+                    {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              UpdateProfile(),
+                        ),
+                            (route) => false,
+                      );
+                    }
+                  }
+              ),
+              SizedBox(height: 10.0),
+              FloatingActionButton.extended(
+                  backgroundColor: Colors.blueAccent,
+                  heroTag: "logoutbtn",
+                  icon: Icon(Icons.logout),
+                  label: Text("Logout"),
+                  tooltip: 'Show Snackbar',
+                  onPressed: () async {
+                    {
+                      //register .. send data  to authservices
+                      dynamic result = await _auth.signOut();
+                      if (result == null) {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false, // user must tap button!
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Sucessfully Logout"),
+                              content: SingleChildScrollView(
+                                child: ListBody(
+                                  children: <Widget>[
+                                    Text('Please login!'),
+                                  ],
+                                ),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () async {
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            LoginView(),
+                                      ),
+                                          (route) => false,
+                                    );
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                      else {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false, // user must tap button!
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Fail to logout'),
+                              content: SingleChildScrollView(
+                                child: ListBody(
+                                  children: <Widget>[
+                                    Text('Something happen'),
+                                  ],
+                                ),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    }
+                  }
+              ),
+
+            ],
+          ),
         ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(25.0),
         child: Container(
@@ -320,8 +376,8 @@ class _ComplaintState extends State<Complaint> {
               fit: BoxFit.cover,
             ),
           ),*/
-          child: Container(
-            child: SingleChildScrollView(
+          child: SingleChildScrollView(
+            child: Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -351,12 +407,12 @@ class _ComplaintState extends State<Complaint> {
                               else {return null;}
                             },
                             deco: InputDecoration(
-                                hintText: 'Subject',
+                                hintText: 'Subject eg :- "Wild Dog Appeared"',
                                 border: InputBorder.none,
                                 icon: Icon(Icons.people,color: kPrimaryColor,)
                             ),
                           ),
-                          DropdownButton<String>(
+                          DropdownButtonFormField<String>(
                             hint:  Text("Select Animal Species"),
                             value: species,
                             onChanged: (Value) {
@@ -371,28 +427,29 @@ class _ComplaintState extends State<Complaint> {
                                 value: animal,
                               );
                             }).toList(),
+
                           ),
 
                           SizedBox(height: size.height*0.02),
-                          DropdownButton<String>
+                          DropdownButtonFormField<String>
                             (
                             value: c1,
                               items:[
                                 DropdownMenuItem<String>(
                                     value: '1',
-                                    child: Text("Showing their teeth,drooling saliva, walked abnormally"),
+                                    child: Text("Showing their teeth,drooling saliva, walked abnormally",maxLines: 2,),
                                 ),
                                 DropdownMenuItem<String>(
                                   value: '2',
-                                  child: Text("showing their teeth look unhealthy,not drooling, walked abnormally"),
+                                  child: Text("showing their teeth look unhealthy,not drooling, walked abnormally",maxLines: 2,),
                                 ),
                                 DropdownMenuItem<String>(
                                   value: '3',
-                                  child: Text("not showing their teeth walked abnormally"),
+                                  child: Text("not showing their teeth walked abnormally",maxLines: 2,),
                                 ),
                                 DropdownMenuItem<String>(
                                   value: '4',
-                                  child: Text("looks normal and walked normally"),
+                                  child: Text("looks normal and walked normally",maxLines: 2,),
                                 ),
 
                               ],
@@ -401,32 +458,43 @@ class _ComplaintState extends State<Complaint> {
                                   c1 = _value;
                                 });
                               },
-                            hint:Text("Please choose the animal expression")
+                            hint:Text("Please choose the animal expression",maxLines: 2,
+                              style: TextStyle(fontFamily: "Oswald",fontWeight: FontWeight.bold),
+                            ),
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Please choose the animal expression';
+                              }
+                              else {
+                                return null;
+                              }
+                            },
                           ),
                           SizedBox(height: size.height*0.02),
-                          DropdownButton<String>
+                          DropdownButtonFormField<String>
                             (
                               value: c2,
                               items:[
                                 DropdownMenuItem<String>(
                                   value: '1',
-                                  child: Text("Very aggressive toward other people,chasing them and attacking them"),
+                                  child: Text("Very aggressive toward other people,chasing them and attacking them",maxLines: 2,),
                                 ),
                                 DropdownMenuItem<String>(
                                   value: '2',
-                                  child: Text("Very aggressive to creature coming near it"),
+                                  child: Text("Very aggressive to creature coming near it",maxLines: 2,),
                                 ),
                                 DropdownMenuItem<String>(
                                   value: '3',
-                                  child: Text("Making loud noise all the time but don't attack people"),
+                                  child: Text("Making loud noise all the time but don't attack people",maxLines: 2,),
                                 ),
                                 DropdownMenuItem<String>(
                                   value: '4',
-                                  child: Text("Littering the area,don't attack, not scared of people"),
+                                  child: Text("Littering the area,don't attack, not scared of people",maxLines: 2,),
                                 ),
                                 DropdownMenuItem<String>(
                                   value: '5',
-                                  child: Text("Littering the area & run away from people"),
+                                  child: Text("Littering the area & run away from people",maxLines: 2,
+                                  ),
                                 ),
 
                               ],
@@ -435,16 +503,27 @@ class _ComplaintState extends State<Complaint> {
                                   c2 = _value;
                                 });
                               },
-                              hint:Text("Please choose the animal behaviour")
+                              hint:Text("Please choose the animal behaviour",maxLines: 2,
+                                style: TextStyle(fontFamily: "Oswald",
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return 'Please choose the animal behaviour';
+                                }
+                                else {
+                                  return null;
+                                }
+                              }
                           ),
                           SizedBox(height: size.height*0.02),
-                          DropdownButton<String>
+                          DropdownButtonFormField<String>
                             (
                               value: c3,
                               items:[
                                 DropdownMenuItem<String>(
                                   value: '1',
-                                  child: Text("Have poor skin condition/multiple wounds on body and no fur at all"),
+                                  child: Text("Have poor skin condition/multiple wounds on body and no fur at all",maxLines: 2,),
                                 ),
                                 DropdownMenuItem<String>(
                                   value: '2',
@@ -460,11 +539,24 @@ class _ComplaintState extends State<Complaint> {
                                   c3 = _value;
                                 });
                               },
-                              hint:Text("Please choose the animal appearances")
+                              hint:Text("Please choose the animal condition",maxLines: 2,
+                                style: TextStyle(fontFamily: "Oswald",
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return 'Please choose the animal physical condition';
+                                }
+                                else {
+                                  return null;
+                                }
+                              }
                           ),
                           SizedBox(height: size.height*0.02),
                           TextField(
-                            decoration: InputDecoration(fillColor: Colors.white60,hintText: 'Please enter the detail'),
+                            decoration: InputDecoration(fillColor: Colors.white60,
+                                hintText: 'Please enter the detail, such as the color of the animal, breed and etc',
+                            ),
                             keyboardType: TextInputType.multiline,
                             controller: detailCtrl,
                             maxLines: null,
@@ -477,7 +569,7 @@ class _ComplaintState extends State<Complaint> {
 
                   SizedBox(height: 9.0),
                   BusyButton(
-                    title: 'Submit',
+                    title: 'Next',
                     onPressed: () async {
                       priority = PriorityFilter(int.parse(c1), int.parse(c2),int.parse(c3) );
                       radius = findRadius(priority,species);

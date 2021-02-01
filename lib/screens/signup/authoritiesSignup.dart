@@ -7,6 +7,7 @@ import 'package:sac/services/authservice.dart';
 import 'package:sac/components/busybutton.dart';
 import 'package:flutter/services.dart';
 import 'package:sac/screens/Wrapper.dart';
+import 'package:sac/screens/AWrapper.dart';
 class SignUpAuthView extends StatefulWidget {
   final Function toggleView;
   SignUpAuthView({this.toggleView});
@@ -127,7 +128,7 @@ class _SignUpAuthViewState extends State<SignUpAuthView> {
                                 content: SingleChildScrollView(
                                   child: ListBody(
                                     children: <Widget>[
-                                      Text('Please login!'),
+                                      Text('Thank You for registering with us'),
                                     ],
                                   ),
                                 ),
@@ -137,7 +138,7 @@ class _SignUpAuthViewState extends State<SignUpAuthView> {
                                     onPressed: () async {Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (BuildContext context) => Wrapper(),
+                                        builder: (BuildContext context) => AWrapper(),
                                       ),
                                           (route) => false,
                                     );},

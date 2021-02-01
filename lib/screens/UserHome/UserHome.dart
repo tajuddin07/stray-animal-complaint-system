@@ -10,7 +10,7 @@ import 'package:sac/screens/Wrapper.dart';
 import 'package:sac/screens/complaint/geo.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
+import 'package:sac/screens/UserHome/UserProfile.dart';
 
 class Dashboard extends StatefulWidget {
   final appTitle = 'Stray Animal Complaint';
@@ -50,26 +50,14 @@ class _DashboardState extends State<Dashboard> {
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
   TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Home',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 1: Business',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
-  ];
+
 
 
   @override
   Widget build(BuildContext context) {
 
-
+    bool visI= false;
+    bool visC=false;
     fetchComplaint() {
       return   Firestore.instance
           .collection("complaint")
@@ -77,92 +65,148 @@ class _DashboardState extends State<Dashboard> {
           .snapshots();
     }
 
-
-
     Size size = MediaQuery.of(context).size;
 
 
-
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Stray Animal Complaint System'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Logout',
-            onPressed: () async{
-              {
-                  //register .. send data  to authservices
-                  dynamic result1 = await _auth.signOut();
-                  print(result1);
-                  if(result1==null){
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false, // user must tap button!
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text("Sucessfully Logout"),
-                          content: SingleChildScrollView(
-                            child: ListBody(
-                              children: <Widget>[
-                                Text('Please login!'),
-                              ],
-                            ),
-                          ),
-                          actions: <Widget>[
-                            TextButton(
-                              child: Text('OK'),
-                              onPressed: () async {Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) => LoginView(),
+      appBar: AppBar(title: Text("Home"),),
+      drawer: Theme(
+        data: Theme.of(context).copyWith(
+          canvasColor: Colors.deepPurpleAccent,
+        ),
+        child: Drawer(
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                child: Text(''),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage("assets/images/saclogo.jpeg"),
+                      fit: BoxFit.cover
+                  ),
+                  color: Colors.blue,
+                ),
+              ),
+              FloatingActionButton.extended(
+                  backgroundColor: Colors.blue,
+                  icon: Icon(Icons.home),
+                  heroTag: "homebtn",
+                  label: Text("Home"),
+                  tooltip: 'Show Snackbar',
+                  onPressed: () async {
+                    {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              Dashboard(),
+                        ),
+                            (route) => false,
+                      );
+                    }
+                  }
+              ),
+              SizedBox(height: 10.0),
+              FloatingActionButton.extended(
+                  backgroundColor: Colors.blue,
+                  heroTag: "EditProfilebtn",
+                  icon: Icon(Icons.person),
+                  label: Text("Profile"),
+                  tooltip: 'Show Snackbar',
+                  onPressed: () async {
+                    {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              UpdateProfile(),
+                        ),
+                            (route) => false,
+                      );
+
+
+                    }
+                  }
+              ),
+              SizedBox(height: 10.0),
+              FloatingActionButton.extended(
+                  backgroundColor: Colors.blueAccent,
+                  heroTag: "logoutbtn",
+                  icon: Icon(Icons.logout),
+                  label: Text("Logout"),
+                  tooltip: 'Show Snackbar',
+                  onPressed: () async {
+                    {
+                      //register .. send data  to authservices
+                      dynamic result = await _auth.signOut();
+                      if (result == null) {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false, // user must tap button!
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Sucessfully Logout"),
+                              content: SingleChildScrollView(
+                                child: ListBody(
+                                  children: <Widget>[
+                                    Text('Please login!'),
+                                  ],
                                 ),
-                                    (route) => false,
-                              );},
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
-                  else{
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false, // user must tap button!
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Failed to logout'),
-                          content: SingleChildScrollView(
-                            child: ListBody(
-                              children: <Widget>[
-                                Text('Try again later'),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () async {
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            LoginView(),
+                                      ),
+                                          (route) => false,
+                                    );
+                                  },
+                                ),
                               ],
-                            ),
-                          ),
-                          actions: <Widget>[
-                            TextButton(
-                              child: Text('OK'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
+                            );
+                          },
                         );
-                      },
-                    );
+                      }
+                      else {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false, // user must tap button!
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Fail to logout'),
+                              content: SingleChildScrollView(
+                                child: ListBody(
+                                  children: <Widget>[
+                                    Text('Something happen'),
+                                  ],
+                                ),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    }
                   }
-                }
-            },
+              ),
+
+            ],
           ),
-          IconButton(
-            icon: const Icon(Icons.navigate_next),
-            tooltip: 'Next page',
-            onPressed: () {
-              /*openPage(context)*/;
-            },
-          ),
-        ],
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
          heroTag: Icons.add,
@@ -178,14 +222,20 @@ class _DashboardState extends State<Dashboard> {
         label : Text("Add Complaint"),
       ),
 
-      resizeToAvoidBottomPadding: false,
+      /*resizeToAvoidBottomPadding: false,*/
       body:Container(
-        color: Colors.lightBlueAccent,
+        /*color: Colors.lightBlueAccent,*/
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/bguserhome.png"),
+            fit: BoxFit.fill,
+          ),
+        ),
         child: Column(
           children:<Widget> [
             SizedBox(height: 15.0),
             Center(child: Text(' My Complaint List', textAlign: TextAlign.center,
-                style: style)),
+                style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,fontFamily: "Oswald",color: Colors.white))),
             SizedBox(height: 10.0),
             Container(
               height: size.height*0.7 ,
@@ -193,6 +243,7 @@ class _DashboardState extends State<Dashboard> {
                 stream: fetchComplaint(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
+
                   if (!snapshot.hasData) {
                     return new Container(
                       child: Text(" No data"),
@@ -201,6 +252,10 @@ class _DashboardState extends State<Dashboard> {
                     return ListView.builder(
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (BuildContext context, int i) {
+                          if(snapshot.data.documents[i]["Completion Time"]!=null){visC = true;}
+                          else{visC=false;}
+                          if(snapshot.data.documents[i]["Rejection Time"]!=null){visI = true;}
+                          else{visC=false;}
                           return Padding(
                             padding: const EdgeInsets.all(5.0),
                             child: Container(
@@ -218,7 +273,7 @@ class _DashboardState extends State<Dashboard> {
                                       elevation: 8.0,
                                       margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
                                       child: Container(
-                                        decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
+                                        decoration: BoxDecoration(color: Color.fromRGBO(72, 58, 119, .9)),
                                         child: ListTile(
                                           contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                                           leading: Container(
@@ -281,25 +336,24 @@ class _DashboardState extends State<Dashboard> {
                                                                 Expanded(
                                                                   child: Text(snapshot.data.documents[i]["Date"],
                                                                   ),
-
                                                                 ),
                                                               ],
                                                             ),
                                                             SizedBox(height: size.height*0.01),
-                                                            Row(
-                                                              children: [
-                                                                Text("Detail: "),
-                                                                Expanded(
-                                                                  child: Text(snapshot.data.documents[i]["Detail"],
-                                                                    maxLines :4,
-                                                                    overflow: TextOverflow.ellipsis,
-                                                                    textDirection: TextDirection.ltr,
-                                                                    textAlign: TextAlign.justify,
-                                                                  ),
+                                                            Row(children: [Text("Detail: "),],),
+                                                              Row(
+                                                                children: [
+                                                                    Text(""),Expanded(
 
-                                                                ),
-                                                              ],
-                                                            ),
+                                                                    child:Text(snapshot.data.documents[i]["Detail"],
+                                                                      maxLines: 4,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                       textDirection: TextDirection.ltr,
+                                                                      textAlign: TextAlign.justify,
+                                                                    ),
+                                                                  )
+                                                                     ]
+                                                                 ),
                                                             SizedBox(height: size.height*0.01),
                                                             Row(
                                                               children: [
@@ -307,7 +361,9 @@ class _DashboardState extends State<Dashboard> {
                                                                 Text(snapshot.data.documents[i]["Status"]),
                                                               ],
                                                             ),
+                                                            SizedBox(height: size.height*0.01),
                                                           ],
+
                                                         ),
                                                       ),
                                                       actions: <Widget>[
@@ -321,27 +377,77 @@ class _DashboardState extends State<Dashboard> {
                                                           ),
                                                         ),
                                                         Align(
-                                                         /* alignment: Alignment.bottomLeft,
+                                                          alignment: Alignment.bottomLeft,
                                                           child: TextButton(
-                                                            child: Text('Call'),
-                                                            onPressed: () {
-                                                              // Navigator.of(context).pop();
-                                                              UrlLauncher.launch('tel:'+snapshot.data.documents[i]["Phone Number"]);
+                                                            child: Text('Delete'),
+                                                            onPressed: () async {
+                                                              String cid = snapshot.data.documents[i].documentID;
+                                                              var result =Firestore.instance.collection('complaint').document(cid).delete();
+                                                              if(result!= null)
+                                                                {
+                                                                  showDialog(
+                                                                                              context: context,
+                                                                                              barrierDismissible: false, // user must tap button!
+                                                                                              builder: (BuildContext context) {
+                                                                                                return AlertDialog(
+                                                                                                  title: Text('Delete Success'),
+                                                                                                  content: SingleChildScrollView(
+                                                                                                    child: ListBody(
+                                                                                                      children: <Widget>[
+                                                                                                        Text('Please click okay'),
+                                                                                                      ],
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                  actions: <Widget>[
+                                                                                                    TextButton(
+                                                                                                      child: Text('OK'),
+                                                                                                      onPressed: () {
+                                                                                                        Navigator.pushAndRemoveUntil(
+                                                                                                                                context,
+                                                                                                                                MaterialPageRoute(
+                                                                                                                                  builder: (BuildContext context) =>
+                                                                                                                                      Dashboard(),
+                                                                                                                                ),
+                                                                                                                                    (route) => false,
+                                                                                                                              );
+                                                                                                      },
+                                                                                                    ),
+                                                                                                  ],
+                                                                                                );
+                                                                                              },
+                                                                                            );
+                                                                }
+                                                              else
+                                                                {
+                                                                  showDialog(
+                                                                                              context: context,
+                                                                                              barrierDismissible: false, // user must tap button!
+                                                                                              builder: (BuildContext context) {
+                                                                                                return AlertDialog(
+                                                                                                  title: Text('Delete Success'),
+                                                                                                  content: SingleChildScrollView(
+                                                                                                    child: ListBody(
+                                                                                                      children: <Widget>[
+                                                                                                        Text('Please click okay'),
+                                                                                                      ],
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                  actions: <Widget>[
+                                                                                                    TextButton(
+                                                                                                      child: Text('OK'),
+                                                                                                      onPressed: () {
+                                                                                                        Navigator.of(context).pop();
+                                                                                                        Navigator.of(context).pop();
+                                                                                                      },
+                                                                                                    ),
+                                                                                                  ],
+                                                                                                );
+                                                                                              },
+                                                                                            );
+                                                                }
                                                             },
-                                                          ),*/
+                                                          ),
                                                         ),
-                                                        /*TextButton(
-                                                          child: Text('Route'),
-                                                          onPressed: () async{
-                                                            final availableMaps = await MapLauncher.installedMaps;
-                                                            print(availableMaps); // [AvailableMap { mapName: Google Maps, mapType: google }, ...]
-
-                                                            await availableMaps.first.showMarker(
-                                                              coords: Coords(snapshot.data.documents[i]["latitude"], snapshot.data.documents[i]["longtitude"]),
-                                                              title: snapshot.data.documents[i]["Garage Name"],
-                                                            );
-                                                          },
-                                                        ),*/
                                                       ],
                                                     );
                                                   },

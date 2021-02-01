@@ -63,6 +63,28 @@ class AuthenticationService {
     }
   }
 
+  Future updateProfile(String email, String password, String name, String address,String phoneNo) async {
+    try {
+      userid = (await _firebaseAuth.currentUser()).uid;
+      await DatabaseService(uid: userid).updateUserData(email, password,name, address,phoneNo);
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future updateProfileAuth(String email, String password, String name,
+      String address, String phoneNo) async {
+    try {
+      userid = (await _firebaseAuth.currentUser()).uid;
+      await DatabaseService(uid: userid).updateAuthoritiesData(
+          email, password, name, address, phoneNo);
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
   Future<void> deleteComplaint(DocumentSnapshot doc) async {
     _fs.collection("complaint").document(doc.documentID).delete();
   }
@@ -90,7 +112,23 @@ class AuthenticationService {
     }
   }
 
+  Future updateComplete(String status, String completeTime,String id) async {
+    try {
+      await DatabaseService().updateComplete(status, completeTime,id);
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
 
+  Future updateInvalid(String status, String completeTime,String id) async {
+      try {
+        await DatabaseService().updateInvalid(status, completeTime,id);
+      } catch (e) {
+        print(e.toString());
+        return null;
+      }
+    }
  /* Future removeComplaint(String uid) async{
     AuthResult result= await _fs ;
     return ;

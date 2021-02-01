@@ -128,7 +128,7 @@ class _SignUpViewState extends State<SignUpView> {
                               content: SingleChildScrollView(
                                 child: ListBody(
                                   children: <Widget>[
-                                    Text('Please login!'),
+                                    Text('Thank You for registering with us'),
                                   ],
                                 ),
                               ),

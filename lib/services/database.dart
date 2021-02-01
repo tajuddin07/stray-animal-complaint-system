@@ -57,4 +57,24 @@ class DatabaseService {
 
         });
   }
+
+  Future updateComplete(String status, String completeTime, String cid) async {
+    return await ComplaintCollection.document(cid).setData(
+        {
+          'Status': status,
+          'Completion Time' : completeTime,
+        },
+        merge: true,
+        );
+  }
+
+  Future updateInvalid(String status, String completeTime, String cid) async {
+      return await ComplaintCollection.document(cid).setData(
+          {
+            'Status': status,
+            'Rejection Time' : completeTime,
+          },
+          merge: true,
+          );
+    }
 }
